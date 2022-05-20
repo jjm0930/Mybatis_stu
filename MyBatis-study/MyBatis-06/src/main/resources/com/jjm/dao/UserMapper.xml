@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jjm.dao.UserMapper">
+    <select id="getLoginUser" resultType="user">
+        select * from smbms_user where userCode=#{userCode}
+    </select>
+    <select id="getUserList" parameterType="map" resultType="user">
+        select u.*,r.id,r.roleName userRoleName
+        from smbms_user u,smbms_role r
+        WHERE u.userRole=r.id
+        <if test="userName!=null">and userName like #{userName}</if>
+        <if test="userRole!=null">and userRole=#{userRole}</if>
+        limit #{currentPageNo},#{pageSize}
+    </select>
+    <select id="queryUserById" resultType="user">
+        select * from smbms_user
+        <where>
+            <if test="id!=null">id=#{id}</if>
+        </where>
+    </select>
+
+    <select id="getUserCounts" parameterType="map" resultType="int">
+        select count(*)
+        from smbms_user u,smbms_role r where u.userRole=r.id
+        <if test="userName!=null">and u.userName like #{userName}</if>
+        <if test="userRoleName!=null">and r.roleName like #{userRoleName}</if>
+    </select>
+
+    <insert id="addUser" parameterType="user">
+        insert into smbms_user
+        values(NULL,#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate})
+    </insert>
+</mapper>
